@@ -69,5 +69,5 @@ theme: polarbear
 ## Docs: http://hexo.io/docs/deployment.html
 deploy:
   type: git
-  repo: git@github.com:Dreamacro/dreamacro.github.io.git
+  repo: https://github.com/Dreamacro/dreamacro.github.io.git
   branch: master
