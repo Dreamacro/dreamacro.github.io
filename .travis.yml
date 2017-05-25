@@ -14,5 +14,5 @@ before_install:
   - npm install hexo -g
 script:
   - hexo g
-  - sed -i''"/^ *repo/s~github\.com~${GH_TOKEN}@github.com~" _config.yml
+  - sed -i "/^ *repo/s~github\.com~${GH_TOKEN}@github.com~" _config.yml
   - hexo d
