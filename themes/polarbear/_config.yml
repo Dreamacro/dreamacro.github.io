@@ -44,14 +44,14 @@ widget_custom:
 # color: Default | Mint Green | Cobalt Blue | Hot Pink | Dark Violet
 theme:
   color: Default
-  fancybox: false
+  fancybox: true
 
 # ===========================================
 # Third Party Services Settings
 # ===========================================
 
 # Baidu Analytics
-baidu_analytics: //hm.baidu.com/hm.js?271cd4895258110e7bd015c702f07446
+baidu_analytics: 271cd4895258110e7bd015c702f07446
 # Google Analytics
 google_analytics: UA-72808255-1
 
