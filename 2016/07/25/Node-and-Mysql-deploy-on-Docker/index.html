@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="">
+  <head>
+    
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,minimum-scale=1,maximum-scale=1">
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="description" content="Docker开发部署Node小结"/>
+
+
+
+
+  <meta name="keywords" content="Node,Docker," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Dreamacro">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=1.1" />
+
+
+
+<link rel="canonical" href="http://dreamacro.github.io/2016/07/25/Node-and-Mysql-deploy-on-Docker/"/>
+
+
+<meta name="description" content="在Node部署中，遇到过几个比较坑的地方，也都找到了一些解决方案，这里做一个小结，如果有更好的解决方案，请告诉我;)。">
+<meta name="keywords" content="Node,Docker">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Docker开发部署Node小结">
+<meta property="og:url" content="http://dreamacro.github.io/2016/07/25/Node-and-Mysql-deploy-on-Docker/index.html">
+<meta property="og:site_name" content="Dreamacro">
+<meta property="og:description" content="在Node部署中，遇到过几个比较坑的地方，也都找到了一些解决方案，这里做一个小结，如果有更好的解决方案，请告诉我;)。">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-05-20T16:04:05.057Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Docker开发部署Node小结">
+<meta name="twitter:description" content="在Node部署中，遇到过几个比较坑的地方，也都找到了一些解决方案，这里做一个小结，如果有更好的解决方案，请告诉我;)。">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=1.1" />
+<link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet'>
+
+
+  <link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css" />
+
+
+
+
+<script type="text/javascript">
+  var themeConfig = {
+    fancybox: {
+      enable: true
+    },
+  };
+</script>
+
+
+
+
+  
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?271cd4895258110e7bd015c702f07446";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+  <script type="text/javascript">
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-72808255-1', 'auto');
+        ga('send', 'pageview');
+  </script>
+
+
+
+    <title> Docker开发部署Node小结 - Dreamacro </title>
+  </head>
+
+  <body>
+    <div id="page">
+      <header id="masthead"><div class="site-header-inner">
+    <h1 class="site-title">
+        <a href="/." class="logo">Dreamacro</a>
+    </h1>
+
+    <nav id="nav-top">
+        
+            <ul id="menu-top" class="nav-top-items">
+                
+                    <li class="menu-item">
+                        <a href="/archives">
+                            
+                            
+                                Archives
+                            
+                        </a>
+                    </li>
+                
+                    <li class="menu-item">
+                        <a href="/atom.xml">
+                            
+                            
+                                Rss
+                            
+                        </a>
+                    </li>
+                
+            </ul>
+        
+  </nav>
+</div>
+
+      </header>
+      <div id="content">
+        
+    <div id="primary">
+        
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          Docker开发部署Node小结
+        
+      </h1>
+
+      <time class="post-time">
+          Jul 25 2016
+      </time>
+    </header>
+
+
+
+    
+            <div class="post-content">
+            <p>在Node部署中，遇到过几个比较坑的地方，也都找到了一些解决方案，这里做一个小结，如果有更好的解决方案，请告诉我;)。</p>
+<a id="more"></a>
+<h1 id="部署的镜像选择"><a href="#部署的镜像选择" class="headerlink" title="部署的镜像选择"></a>部署的镜像选择</h1><p>一开始是直接选择 <a href="https://hub.docker.com" target="_blank" rel="noopener">Docker Hub</a> 的 Node 官方镜像，看了一下 Tag 发现官方大致提供了两种：</p>
+<p><code>wheezy</code> 和 <code>slim</code></p>
+<p>Node.js 6.3版本的镜像大小</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">wheezy 190MB</span><br><span class="line">slim   84MB</span><br><span class="line">latest 256MB // 正好是个整数;)</span><br></pre></td></tr></table></figure>
+<p>于是我理所当然使用了 <code>slim</code></p>
+<p>Dockerfile如下:</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">FROM</span> node:slim</span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span> mkdir -p /opt/workdir</span><br><span class="line"></span><br><span class="line">WORKDIR /opt/workdir</span><br><span class="line">COPY . /opt/workdir</span><br><span class="line"></span><br><span class="line">RUN npm install --production &amp;&amp; npm install pm2 -g</span><br><span class="line"></span><br><span class="line">EXPOSE 3000</span><br><span class="line"></span><br><span class="line">CMD ["npm", "start"]</span><br></pre></td></tr></table></figure>
+<p>我的项目生成镜像后在近200MB左右，感觉还是太大。</p>
+<p>直到后来发现了 <code>alpine</code> , 官方网站 <a href="https://www.alpinelinux.org/" target="_blank" rel="noopener">alpinelinux</a></p>
+<p>官方介绍：</p>
+<blockquote>
+<p>Alpine Linux is a security-oriented, lightweight Linux distribution based on musl libc and busybox.</p>
+</blockquote>
+<p>单一系统只有2MB左右，很适合我这种强迫症患者</p>
+<p>最终 <code>Dockerfile</code> 如下(包含设置时区):</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">FROM</span> alpine</span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span> apk add --no-cache nodejs tzdata &amp;&amp; \</span><br><span class="line">    cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime &amp;&amp; echo "Asia/Shanghai" &gt; /etc/timezone &amp;&amp; \</span><br><span class="line">    apk del tzdata</span><br><span class="line"></span><br><span class="line">RUN mkdir -p /opt/workdir</span><br><span class="line"></span><br><span class="line">WORKDIR /opt/workdir</span><br><span class="line">COPY . /opt/workdir</span><br><span class="line"></span><br><span class="line">RUN npm install --production &amp;&amp; npm install pm2 -g</span><br><span class="line"></span><br><span class="line">EXPOSE 3000</span><br><span class="line"></span><br><span class="line">CMD ["npm", "start"]</span><br></pre></td></tr></table></figure>
+<p>生成的 <code>image</code> 只有64MB，很强势</p>
+<h1 id="Docker-Compose-部署-Node-amp-Mysql"><a href="#Docker-Compose-部署-Node-amp-Mysql" class="headerlink" title="Docker-Compose 部署 Node &amp; Mysql"></a>Docker-Compose 部署 Node &amp; Mysql</h1><h2 id="Node-开发环境"><a href="#Node-开发环境" class="headerlink" title="Node 开发环境"></a>Node 开发环境</h2><p>因为 <code>Mysql</code> 在 <code>Docker</code> 环境，所以必须有一个本地测试的数据库配置，这里可以利用环境变量来进行开发环境和生产环境的切换。</p>
+<p><a href="https://hub.docker.com/_/mysql/" target="_blank" rel="noopener">Mysql镜像</a>很方便的提供了 <code>MYSQL_PORT_3306_TCP_ADDR</code> 、 <code>MYSQL_PORT_3306_TCP_PORT</code> 等环境变量，这样一来就能很方便的写配置文件了。</p>
+<p>config.js</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">'use strict'</span></span><br><span class="line"><span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">'path'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> config = &#123;</span><br><span class="line">    port: <span class="number">3000</span>,</span><br><span class="line">    staticDir: path.join(__dirname,<span class="string">'..'</span>, <span class="string">'public'</span>),</span><br><span class="line">    mysql: &#123;</span><br><span class="line">        user: <span class="string">'root'</span>,</span><br><span class="line">        pass: process.env.MYSQL_ROOT_PASSWORD,</span><br><span class="line">        host: process.env.MYSQL_PORT_3306_TCP_ADDR,</span><br><span class="line">        port: process.env.MYSQL_PORT_3306_TCP_PORT,</span><br><span class="line">        db: <span class="string">'yourdb'</span></span><br><span class="line">    &#125;,</span><br><span class="line">    secret: <span class="string">'yoursecret'</span>,</span><br><span class="line">    TOKEN_EXPIRATION: <span class="number">60</span> * <span class="number">60</span> * <span class="number">24</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> local = &#123;</span><br><span class="line">    env: <span class="string">'local'</span>,</span><br><span class="line">    mysql: &#123;</span><br><span class="line">        user: <span class="string">'root'</span>,</span><br><span class="line">        pass: <span class="string">'pass'</span>,</span><br><span class="line">        host: <span class="string">'192.168.33.10'</span>,</span><br><span class="line">        port: <span class="number">3306</span>,</span><br><span class="line">        db: <span class="string">'yourdb'</span></span><br><span class="line">    &#125;,</span><br><span class="line">    debug: <span class="literal">true</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (process.env.NODE_ENV === <span class="string">'development'</span>) &#123;</span><br><span class="line">    config = <span class="built_in">Object</span>.assign(config, local)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = config</span><br></pre></td></tr></table></figure>
+<p>package.json</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">"scripts": &#123;</span><br><span class="line">    "start": "pm2 start app.js -i max --no-daemon",</span><br><span class="line">    "dev": "NODE_ENV=development nodemon app.js",</span><br><span class="line">    "test": "NODE_ENV=development mocha"</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Schema-初始化"><a href="#Schema-初始化" class="headerlink" title="Schema 初始化"></a>Schema 初始化</h2><p>Mysql 镜像的文档里有这么一段话</p>
+<blockquote>
+<p>When a container is started for the first time, a new database mysql will be initialized with the provided configuration variables. Furthermore, it will execute files with extensions .sh and .sql that are found in /docker-entrypoint-initdb.d. You can easily populate your mysql services by mounting a SQL dump into that directory and provide custom images with contributed data.</p>
+</blockquote>
+<p>文档中提到了如果在 <code>docker-entrypoint-initdb.d</code> 中放上 <code>.sql</code> 或 <code>.sh</code> 文件，镜像将会自动执行，所以利用 <code>Docker</code> 的 <code>Volume</code> 就行了。</p>
+<p>docker-compose.yml</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">web:</span></span><br><span class="line"><span class="attr">  image:</span> <span class="attr">yourweb:latest</span></span><br><span class="line"><span class="attr">  links:</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">mysql</span></span><br><span class="line"><span class="attr">  ports:</span></span><br><span class="line"><span class="bullet">  -</span> <span class="number">80</span><span class="string">:3000</span></span><br><span class="line"><span class="attr">  volumes:</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">/opt/workdir/schema.sql:/opt/workdir/db/schema.sql</span></span><br><span class="line"><span class="attr">  environment:</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">MYSQL_ROOT_PASSWORD=yourpass</span></span><br><span class="line"><span class="attr">mysql:</span></span><br><span class="line"><span class="attr">  image:</span> <span class="attr">mysql:latest</span></span><br><span class="line"><span class="attr">  volumes:</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">/opt/workdir/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">/data/workdir/mysql:/var/lib/mysql</span></span><br><span class="line"><span class="attr">  environment:</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">MYSQL_ROOT_PASSWORD=yourpass</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">MYSQL_DATABASE=db</span></span><br></pre></td></tr></table></figure>
+<h1 id="Docker-持续集成的-Cache-优化"><a href="#Docker-持续集成的-Cache-优化" class="headerlink" title="Docker 持续集成的 Cache 优化"></a>Docker 持续集成的 Cache 优化</h1><p>经过几次<del>(频繁)</del>的修 <code>BUG</code> 发现了上述那个 <code>Dockerfile</code> 存在一个很严重的问题，每次 <code>commit</code> 触发 CI 后，在更新代码的时候都得重新运行一次</p>
+<p><code>RUN npm install --production &amp;&amp; npm install pm2 -g</code></p>
+<p>然而 <code>package.json</code> 并不是频繁变化的，这样使得 <code>layer</code> 不能尽可能的被使用，<code>build</code> 的时间也变得比较长，经过查资料<del>(Google)</del>后，找到了解决方案。</p>
+<p>Dockerfile</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">FROM</span> alpine</span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span> apk add --no-cache nodejs tzdata &amp;&amp; \</span><br><span class="line">    cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime &amp;&amp; echo "Asia/Shanghai" &gt; /etc/timezone &amp;&amp; \</span><br><span class="line">    apk del tzdata</span><br><span class="line"></span><br><span class="line">COPY package.json /tmp/package.json</span><br><span class="line"></span><br><span class="line">RUN cd /tmp &amp;&amp; npm install --production &amp;&amp; npm install pm2 -g &amp;&amp; \</span><br><span class="line">    mkdir -p /opt/workdir &amp;&amp; mv /tmp/node_modules /opt/workdir/</span><br><span class="line"></span><br><span class="line">WORKDIR /opt/workdir</span><br><span class="line">COPY . /opt/workdir</span><br><span class="line"></span><br><span class="line">EXPOSE 3000</span><br><span class="line"></span><br><span class="line">CMD ["npm", "start"]</span><br></pre></td></tr></table></figure>
+<p><code>layer</code> 层是由 <code>Dockerfile</code> 文件的执行顺序进行叠加的，这里是先把 <code>package.json</code> 先转移到 <code>/tmp</code> 目录，在 <code>/tmp</code> 里执行 <code>npm</code> 的安装，再把 <code>node_modules</code> 移回工作目录，最后把代码移进工作目录。</p>
+<p>这样做的目的是先进行 <code>package.json</code> 的判断，把代码转移放在最后，<code>package.json</code> 不变化，<code>layer</code> 就不会变化，也就不会有额外的 <code>layer</code> 层。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>折腾了一下午，解决了 <code>Docker</code> 部署的几个坑，<del>顺便拿来凑个数，</del> 过两天看能不能搞个大新闻。</p>
+
+            </div>
+          
+
+    
+      <footer class="post-footer">
+		
+		<div class="post-tags">
+		  
+			<a href="/tags/Node/">Node</a>
+		  
+			<a href="/tags/Docker/">Docker</a>
+		  
+		</div>
+		
+
+        
+        
+  <nav class="post-nav">
+    
+      <a class="prev" href="/2016/10/15/Make-reflections-on-front-end/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">对于前端的一点小思考</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    
+    
+      <a class="next" href="/2016/01/24/260-Single-Number-III-319-Bulb-Switcher/">
+        <span class="next-text nav-default">260. Single Number III & 319. Bulb Switcher</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+        
+  <div class="comments" id="comments">
+    
+    <div style="text-align:center;">
+        <button class="btn" id="load-disqus" onclick="disqus.load();">加载 Disqus 评论</button>
+    </div>
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+      </footer>
+    
+  </article>
+
+    </div>
+
+      </div>
+
+      <footer id="colophon"><span class="copyright-year">
+    
+        &copy;
+    
+        2017 -
+    
+    2018
+    <span class="footer-author">Dreamacro.</span>
+    <span class="power-by">
+        Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a> and <a class="theme-link" href="https://github.com/frostfan/hexo-theme-polarbear">Polar Bear</a>
+    </span>
+</span>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+    
+
+<script type="text/javascript">
+  var disqus_shortname = 'dreamacro';
+  var disqus_identifier = '2016/07/25/Node-and-Mysql-deploy-on-Docker/';
+
+  var disqus_title = "Docker开发部署Node小结";
+
+
+  var disqus = {
+    load : function disqus(){
+        if(typeof DISQUS !== 'object') {
+          (function () {
+          var s = document.createElement('script'); s.async = true;
+          s.type = 'text/javascript';
+          s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+          }());
+          $('#load-disqus').remove(); ///加载后移除按钮
+        }
+    }
+  }
+
+  
+    var disqus_config = function () {
+        this.page.url = disqus_url;
+        this.page.identifier = disqus_identifier;
+        this.page.title = disqus_title;
+    };
+  
+
+</script>
+
+
+    
+  
+
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  
+
+    <script type="text/javascript" src="/js/src/theme.js?v=1.1"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=1.1"></script>
+
+  </body>
+</html>

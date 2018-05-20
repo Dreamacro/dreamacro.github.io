@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="">
+  <head>
+    
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,minimum-scale=1,maximum-scale=1">
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="description" content="260. Single Number III & 319. Bulb Switcher"/>
+
+
+
+
+  <meta name="keywords" content="Leetcode," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Dreamacro">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=1.1" />
+
+
+
+<link rel="canonical" href="http://dreamacro.github.io/2016/01/24/260-Single-Number-III-319-Bulb-Switcher/"/>
+
+
+<meta name="description" content="最近也开始刷Leetcode,而且感觉也是时候更新一下Blog了,所以拿Leetcode的笔记来凑数(大雾">
+<meta name="keywords" content="Leetcode">
+<meta property="og:type" content="article">
+<meta property="og:title" content="260. Single Number III &amp; 319. Bulb Switcher">
+<meta property="og:url" content="http://dreamacro.github.io/2016/01/24/260-Single-Number-III-319-Bulb-Switcher/index.html">
+<meta property="og:site_name" content="Dreamacro">
+<meta property="og:description" content="最近也开始刷Leetcode,而且感觉也是时候更新一下Blog了,所以拿Leetcode的笔记来凑数(大雾">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-05-20T16:04:05.057Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="260. Single Number III &amp; 319. Bulb Switcher">
+<meta name="twitter:description" content="最近也开始刷Leetcode,而且感觉也是时候更新一下Blog了,所以拿Leetcode的笔记来凑数(大雾">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=1.1" />
+<link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet'>
+
+
+  <link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css" />
+
+
+
+
+<script type="text/javascript">
+  var themeConfig = {
+    fancybox: {
+      enable: true
+    },
+  };
+</script>
+
+
+
+
+  
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?271cd4895258110e7bd015c702f07446";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+  <script type="text/javascript">
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-72808255-1', 'auto');
+        ga('send', 'pageview');
+  </script>
+
+
+
+    <title> 260. Single Number III & 319. Bulb Switcher - Dreamacro </title>
+  </head>
+
+  <body>
+    <div id="page">
+      <header id="masthead"><div class="site-header-inner">
+    <h1 class="site-title">
+        <a href="/." class="logo">Dreamacro</a>
+    </h1>
+
+    <nav id="nav-top">
+        
+            <ul id="menu-top" class="nav-top-items">
+                
+                    <li class="menu-item">
+                        <a href="/archives">
+                            
+                            
+                                Archives
+                            
+                        </a>
+                    </li>
+                
+                    <li class="menu-item">
+                        <a href="/atom.xml">
+                            
+                            
+                                Rss
+                            
+                        </a>
+                    </li>
+                
+            </ul>
+        
+  </nav>
+</div>
+
+      </header>
+      <div id="content">
+        
+    <div id="primary">
+        
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          260. Single Number III & 319. Bulb Switcher
+        
+      </h1>
+
+      <time class="post-time">
+          Jan 24 2016
+      </time>
+    </header>
+
+
+
+    
+            <div class="post-content">
+            <p>最近也开始刷Leetcode,而且感觉也是时候更新一下Blog了,所以拿Leetcode的笔记来凑数(大雾</p>
+<a id="more"></a>
+<h2 id="260-Single-Number-III"><a href="#260-Single-Number-III" class="headerlink" title="260. Single Number III"></a>260. Single Number III</h2><blockquote>
+<p>Given an array of numbers nums, in which exactly two elements appear only once and all the other elements appear exactly twice. Find the two elements that appear only once.</p>
+</blockquote>
+<blockquote>
+<p>For example:</p>
+</blockquote>
+<blockquote>
+<p>Given nums = [1, 2, 1, 3, 2, 5], return [3, 5].</p>
+</blockquote>
+<h4 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h4><p>找出数组中两个不成对的数字，顺序不限，和Single Number I不同，不能用直接异或的方法进行计算。这里我们要用到位运算</p>
+<blockquote>
+<p>x &amp; -x = 二进制中第一个1出现的位置<br>如 0b1010 &amp; -0b1010 = 2 ^ 1 = 2</p>
+</blockquote>
+<p>之后只要对mask &amp; nums[i]不等于0的元素进行异或，遍历一轮后就能得出两个中的其中一个值，最后再和另一个数相异或即可</p>
+<p>最终代码</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> singleNumber = <span class="function"><span class="keyword">function</span>(<span class="params">nums</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> xor = nums.reduce(<span class="function">(<span class="params">p, n</span>) =&gt;</span> p ^ n)</span><br><span class="line">    <span class="keyword">var</span> mask = xor &amp; -xor</span><br><span class="line">    <span class="keyword">var</span> ans = <span class="number">0</span></span><br><span class="line">    nums.forEach(<span class="function"><span class="params">item</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (mask &amp; item) ans ^= item</span><br><span class="line">    &#125;)</span><br><span class="line">    <span class="keyword">return</span> [ans, ans ^ xor]</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h2 id="319-Bulb-Switcher"><a href="#319-Bulb-Switcher" class="headerlink" title="319. Bulb Switcher"></a>319. Bulb Switcher</h2><blockquote>
+<p>There are n bulbs that are initially off. You first turn on all the bulbs. Then, you turn off every second bulb. On the third round, you toggle every third bulb (turning on if it’s off or turning off if it’s on). For the nth round, you only toggle the last bulb. Find how many bulbs are on after n rounds.</p>
+</blockquote>
+<blockquote>
+<p>Example:</p>
+</blockquote>
+<blockquote>
+<blockquote>
+<p>Given n = 3.</p>
+</blockquote>
+</blockquote>
+<blockquote>
+<blockquote>
+<p>At first, the three bulbs are [off, off, off].<br>After first round, the three bulbs are [on, on, on].<br>After second round, the three bulbs are [on, off, on].<br>After third round, the three bulbs are [on, off, off].</p>
+</blockquote>
+</blockquote>
+<blockquote>
+<p>So you should return 1, because there is only one bulb is on.</p>
+</blockquote>
+<h4 id="分析-1"><a href="#分析-1" class="headerlink" title="分析"></a>分析</h4><p>这里我们可以举几个例子进行分析，这里就取n = 20，不难看出，第m个按钮Toggle的次数就是它因子的个数</p>
+<blockquote>
+<p>m = 10 在 2 5 10 处翻转<br>m = 15 在 3 5 15 处翻转<br>m = 16 在 2 4 8 16 处翻转</p>
+</blockquote>
+<p>从上述例子可以看出，当m开方后是整数（因子重复）时，翻转奇数次（包括第一次），翻转奇数次的最终结果就是灯泡为On，所以最终灯泡On的个数就是n个数中有因子重复的数，这个数字和sqrt(n)后向下取整在数值上是相等的。</p>
+<p>最终代码（竟然就一行，2333333）</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> bulbSwitch = <span class="function"><span class="keyword">function</span>(<span class="params">n</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">Math</span>.floor(<span class="built_in">Math</span>.sqrt(n))</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+            </div>
+          
+
+    
+      <footer class="post-footer">
+		
+		<div class="post-tags">
+		  
+			<a href="/tags/Leetcode/">Leetcode</a>
+		  
+		</div>
+		
+
+        
+        
+  <nav class="post-nav">
+    
+      <a class="prev" href="/2016/07/25/Node-and-Mysql-deploy-on-Docker/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">Docker开发部署Node小结</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    
+    
+  </nav>
+
+        
+  <div class="comments" id="comments">
+    
+    <div style="text-align:center;">
+        <button class="btn" id="load-disqus" onclick="disqus.load();">加载 Disqus 评论</button>
+    </div>
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+      </footer>
+    
+  </article>
+
+    </div>
+
+      </div>
+
+      <footer id="colophon"><span class="copyright-year">
+    
+        &copy;
+    
+        2017 -
+    
+    2018
+    <span class="footer-author">Dreamacro.</span>
+    <span class="power-by">
+        Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a> and <a class="theme-link" href="https://github.com/frostfan/hexo-theme-polarbear">Polar Bear</a>
+    </span>
+</span>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+    
+
+<script type="text/javascript">
+  var disqus_shortname = 'dreamacro';
+  var disqus_identifier = '2016/01/24/260-Single-Number-III-319-Bulb-Switcher/';
+
+  var disqus_title = "260. Single Number III & 319. Bulb Switcher";
+
+
+  var disqus = {
+    load : function disqus(){
+        if(typeof DISQUS !== 'object') {
+          (function () {
+          var s = document.createElement('script'); s.async = true;
+          s.type = 'text/javascript';
+          s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+          }());
+          $('#load-disqus').remove(); ///加载后移除按钮
+        }
+    }
+  }
+
+  
+    var disqus_config = function () {
+        this.page.url = disqus_url;
+        this.page.identifier = disqus_identifier;
+        this.page.title = disqus_title;
+    };
+  
+
+</script>
+
+
+    
+  
+
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  
+
+    <script type="text/javascript" src="/js/src/theme.js?v=1.1"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=1.1"></script>
+
+  </body>
+</html>
