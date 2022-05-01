@@ -1,0 +1,41 @@
+baseURL: http://dreamacro.github.io
+languageCode: zh-Hans
+title: Dreamacro
+buildDrafts: false
+disqusShortname: dreamacro
+
+menu:
+  main:
+    - identifier: archives
+      name: Archive
+      url: /archives/
+      weight: 10
+    - identifier: tags
+      name: Tags
+      url: /tags/
+      weight: 20
+    - identifier: github
+      name: Github
+      url: https://github.com/Dreamacro
+      weight: 30
+
+params:
+  showReadingTime: true
+  showCodeCopyButtons: true
+  socialIcons:
+    - name: github
+      url: "https://github.com/"
+
+markup:
+  goldmark:
+    renderer:
+      unsafe: true
+  highlight:
+    guessSyntax: true
+    lineNos: true
+    noClasses: false
+    style: dracula
+
+module:
+  imports:
+  - path: github.com/adityatelange/hugo-PaperMod
