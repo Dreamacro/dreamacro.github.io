@@ -2,4 +2,4 @@
 辨别的方法也很简单，服务端渲染返回的 HTML 里会带有预填充信息，这里 Vue 的预填充标志是 window.__INITIAL_STATE__
 触发漏洞的点
 将自己的 commonjs 代码保存，点击 Save 会跳转到 URL /codes/:id 开启一个新的页面，利用模块导入和 const m = require('id') 将模块引入，再次保存 利用服务端渲染得到结果，可以发现依赖的模块进行了一次包装 在客户端中，可以找到对代码进行包装的代码
-1 2 3 4 5 6 7 8 9 10 11 function warp (code) { try { const ret = eval(`(function (module, exports, require) { ${code}})`) if (typeof ret !</description></item></channel></rss>
+1 2 3 4 5 6 7 8 9 10 11 function warp (code) { try { const ret = eval(`(function (module, exports, require) { ${code} })`) if (typeof ret !== &amp;#39;function&amp;#39;) { throw new Error(&amp;#39;type not valid&amp;#39;) } return ret.</description></item></channel></rss>
